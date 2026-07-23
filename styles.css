@@ -171,14 +171,14 @@ a{ color: inherit; }
 .wordmark span{ color: var(--accent); }
 .wordmark.small{ font-size: 1rem; }
 .wordmark-icon{
-  width: 28px;
-  height: 28px;
-  border-radius: 5px;
+  width: 42px;
+  height: 42px;
+  border-radius: 7px;
   flex: none;
 }
 .wordmark.small .wordmark-icon{
-  width: 24px;
-  height: 24px;
+  width: 34px;
+  height: 34px;
 }
 
 .main-nav ul{
