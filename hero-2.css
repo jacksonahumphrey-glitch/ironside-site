@@ -1,0 +1,261 @@
+/* =========================================================================
+   IRONSIDE AI — hero section
+   ---------------------------------------------------------------------
+   Every class here is prefixed `ih-` so nothing can collide with your
+   existing styles.css (which already owns .hero, .btn, .eyebrow, .wrap).
+   Your header, nav, buttons and fonts are untouched — this file only
+   styles the hero block itself.
+
+   These styles are already inlined in index.html, so you do NOT need to
+   upload this file. It's here in case you'd rather move them into
+   styles.css later — if you do, delete the <style> block from index.html.
+   ========================================================================= */
+
+.ih-hero {
+  --ih-ink:    #0c1010;   /* hero background                         */
+  --ih-paper:  #f0ece0;   /* headline                                */
+  --ih-muted:  #cdc8bd;   /* sub-headline                            */
+  --ih-glow:   #fb8b0a;   /* live highlights, taken from your logo   */
+
+  position: relative;
+  /* one clean screen: full viewport minus your site header, which sits
+     above this section. --ih-header-h is measured at runtime (see the
+     script at the bottom of index.html) and is 0 if the header is fixed. */
+  min-height: calc(100vh  - var(--ih-header-h, 0px));
+  min-height: calc(100svh - var(--ih-header-h, 0px));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: var(--ih-ink);
+  isolation: isolate;
+}
+
+.ih-hero *, .ih-hero *::before, .ih-hero *::after { box-sizing: border-box; }
+
+/* --- the network field --------------------------------------------------- */
+
+.ih-field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  animation: ih-fade 1.4s ease .1s both;
+  /* fades the network out toward the edges so no line dangles into a corner */
+  -webkit-mask-image: radial-gradient(ellipse 57% 55% at 50% 36%,
+                       #000 32%, rgba(0,0,0,.55) 64%, transparent 94%);
+          mask-image: radial-gradient(ellipse 57% 55% at 50% 36%,
+                       #000 32%, rgba(0,0,0,.55) 64%, transparent 94%);
+}
+
+.ih-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--depth) * 1px),
+    calc(var(--my, 0) * var(--depth) * 1px), 0);
+  transition: transform .6s cubic-bezier(.2,.7,.3,1);
+  will-change: transform;
+}
+.ih-layer--far  { --depth:  7; }
+.ih-layer--net  { --depth: 16; }
+.ih-layer--near { --depth: 30; filter: blur(14px); opacity: .40; }
+
+/* graph ink */
+.ih-edges      line { stroke: rgba(240,236,224,0.20);  stroke-width: 1.15; }
+.ih-edges-weak line { stroke: rgba(240,236,224,0.095); stroke-width: 1; }
+.ih-edges-live line { stroke: rgba(251,139,10,0.62);   stroke-width: 1.5; }
+
+.ih-n1 circle    { fill: var(--ih-paper); opacity: .92; }
+.ih-n2 circle    { fill: var(--ih-paper); opacity: .60; }
+.ih-n3 circle    { fill: var(--ih-paper); opacity: .34; }
+.ih-far circle   { fill: var(--ih-paper); }
+.ih-bokeh circle { fill: var(--ih-glow); }
+
+.ih-halo { fill: url(#ihAccentHalo); }
+.ih-acc  { fill: #ffbd85; }
+
+.ih-hub-glow { fill: url(#ihHubGlow); }
+.ih-hub-core { fill: #fff3e4; }
+/* a soft bloom, never a stroked ring — a ring reads as an orbit */
+.ih-hub-pulse { fill: url(#ihHubGlow); }
+
+/* --- motion -------------------------------------------------------------- */
+
+@keyframes ih-drift     { 0%,100% { transform: translateY(0) }      50% { transform: translateY(-12px) } }
+@keyframes ih-drift-alt { 0%,100% { transform: translate(0,0) }     50% { transform: translate(10px,8px) } }
+@keyframes ih-pulse     { 0%,100% { transform: scale(1); opacity: 1 } 50% { transform: scale(1.22); opacity: .82 } }
+@keyframes ih-flow      { to { stroke-dashoffset: -48 } }
+@keyframes ih-bloom     { 0% { transform: scale(.55); opacity: 0 } 22% { opacity: .5 } 100% { transform: scale(1.5); opacity: 0 } }
+@keyframes ih-rise      { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: none } }
+@keyframes ih-fade      { from { opacity: 0 } to { opacity: 1 } }
+@keyframes ih-nudge     { 0%,100% { transform: translateY(0) } 50% { transform: translateY(5px) } }
+
+.ih-drift     { animation: ih-drift 11s ease-in-out infinite; }
+.ih-drift-alt { animation: ih-drift-alt 16s ease-in-out infinite; }
+
+.ih-acc { transform-box: fill-box; transform-origin: center;
+          animation: ih-pulse 3.4s ease-in-out infinite; }
+.ih-acc-2 { animation-duration: 4.3s; animation-delay: -1.2s; }
+.ih-acc-3 { animation-duration: 5.1s; animation-delay: -2.6s; }
+
+.ih-edges-live line { stroke-dasharray: 7 13; animation: ih-flow 1.9s linear infinite; }
+.ih-edges-live line:nth-child(2) { animation-duration: 2.6s; }
+.ih-edges-live line:nth-child(3) { animation-duration: 3.2s; }
+
+.ih-hub-core  { transform-box: fill-box; transform-origin: center;
+                animation: ih-pulse 4s ease-in-out infinite; }
+.ih-hub-pulse { transform-box: fill-box; transform-origin: center;
+                animation: ih-bloom 6s cubic-bezier(.2,.6,.35,1) infinite; }
+.ih-hub-pulse--2 { animation-delay: 3s; }
+
+/* --- scrim + corner marks ------------------------------------------------ */
+
+.ih-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    /* pad behind the copy so no edge ever crosses a letterform */
+    radial-gradient(ellipse 68% 39% at 50% 73%,
+      rgba(12,16,16,.92) 0%, rgba(12,16,16,.58) 56%, transparent 80%),
+    linear-gradient(180deg,
+      rgba(12,16,16,.58) 0%,
+      rgba(12,16,16,0)   18%,
+      rgba(12,16,16,.12) 42%,
+      rgba(12,16,16,.74) 66%,
+      rgba(12,16,16,.97) 86%,
+      var(--ih-ink)      100%);
+}
+
+.ih-corner {
+  position: absolute;
+  z-index: 2;
+  width: 30px; height: 30px;
+  opacity: .38;
+  pointer-events: none;
+}
+.ih-corner--tl { top: 26px; left: 26px;
+  border-top: 1.4px solid var(--ih-paper); border-left: 1.4px solid var(--ih-paper); }
+.ih-corner--br { bottom: 26px; right: 26px;
+  border-bottom: 1.4px solid var(--ih-paper); border-right: 1.4px solid var(--ih-paper); }
+
+/* --- copy ---------------------------------------------------------------- */
+
+.ih-content {
+  position: relative;
+  z-index: 3;
+  width: min(820px, calc(100% - 2 * clamp(20px, 5vw, 48px)));
+  margin: 0 auto;
+  padding-bottom: clamp(120px, 15vh, 190px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+/* .eyebrow keeps your existing styling — only the spacing is reset here */
+.ih-content .eyebrow { margin: 0; }
+
+.ih-hero h1 {
+  margin: 0;
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.35rem, 6.2vw, 4.3rem);
+  line-height: 1.03;
+  letter-spacing: -0.022em;
+  color: var(--ih-paper);
+  text-wrap: balance;
+}
+
+.ih-sub {
+  margin: 0;
+  max-width: 34em;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: clamp(1rem, 1.35vw, 1.175rem);
+  line-height: 1.55;
+  color: var(--ih-muted);
+  text-wrap: pretty;
+}
+
+.ih-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px; }
+
+.ih-content > * { animation: ih-rise .85s cubic-bezier(.2,.7,.3,1) both; }
+.ih-content > :nth-child(1) { animation-delay: .10s }
+.ih-content > :nth-child(2) { animation-delay: .20s }
+.ih-content > :nth-child(3) { animation-delay: .30s }
+.ih-content > :nth-child(4) { animation-delay: .40s }
+
+/* --- scroll cue ---------------------------------------------------------- */
+
+.ih-scroll {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  color: #a8a49c;
+  text-decoration: none;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: color .25s ease;
+  animation: ih-fade 1s ease .9s both;
+}
+.ih-scroll:hover { color: var(--ih-paper); }
+.ih-scroll svg { animation: ih-nudge 2.3s ease-in-out infinite; }
+
+/* =========================================================================
+   RESPONSIVE
+   ========================================================================= */
+
+@media (max-width: 900px) {
+  .ih-field {
+    opacity: .85;                  /* let the copy win on a small screen */
+    transform: translateY(-5%);    /* lift the hub clear of the headline */
+    -webkit-mask-image: radial-gradient(ellipse 86% 34% at 50% 30%,
+                         #000 30%, rgba(0,0,0,.5) 64%, transparent 92%);
+            mask-image: radial-gradient(ellipse 86% 34% at 50% 30%,
+                         #000 30%, rgba(0,0,0,.5) 64%, transparent 92%);
+  }
+  .ih-scrim {
+    background:
+      radial-gradient(ellipse 110% 34% at 50% 70%,
+        rgba(12,16,16,.95) 0%, rgba(12,16,16,.62) 58%, transparent 82%),
+      linear-gradient(180deg,
+        rgba(12,16,16,.62) 0%, rgba(12,16,16,0) 14%,
+        rgba(12,16,16,.16) 34%, rgba(12,16,16,.90) 52%,
+        rgba(12,16,16,.99) 72%, var(--ih-ink) 100%);
+  }
+  .ih-corner { display: none; }
+  .ih-content { padding-bottom: clamp(92px, 14vh, 132px); gap: 15px; }
+}
+
+@media (max-width: 560px) {
+  /* "— automation for businesses" is dead weight on a phone */
+  .ih-content .eyebrow .ih-long { display: none; }
+}
+
+@media (max-width: 480px) {
+  .ih-actions { width: 100%; flex-direction: column; }
+  .ih-actions .btn { width: 100%; }
+  .ih-scroll { bottom: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ih-drift, .ih-drift-alt, .ih-acc, .ih-hub-core, .ih-hub-pulse,
+  .ih-edges-live line, .ih-scroll svg { animation: none !important; }
+  .ih-content > *, .ih-field, .ih-scroll { animation: none !important; opacity: 1; transform: none; }
+  .ih-layer { transition: none; transform: none; }
+  .ih-hub-pulse { display: none; }
+}
