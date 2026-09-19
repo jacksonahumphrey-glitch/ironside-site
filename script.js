@@ -115,6 +115,64 @@
     }, { threshold: 0 }).observe(field);
   }
 
+  /* --- contact form: submit in place, no redirect --------------------
+     Formspree returns JSON when you ask for it, so the visitor never
+     leaves the page. If fetch is missing or the request fails, the form
+     still posts normally and lands on Formspree's own page — the old
+     behaviour, kept as the fallback rather than the default.        */
+  var form = document.querySelector('.contact-form');
+  if (form && window.fetch && window.FormData) {
+    var submitBtn = form.querySelector('[type="submit"]');
+    var mailLink  = document.querySelector('a[href^="mailto:"]');
+    var email     = mailLink ? mailLink.getAttribute('href').replace('mailto:', '') : '';
+
+    var status = document.createElement('div');
+    status.className = 'form-status';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-live', 'polite');
+    form.parentNode.insertBefore(status, form.nextSibling);
+
+    var tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var warn = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>';
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (form.getAttribute('data-sending')) return;
+      form.setAttribute('data-sending', '1');
+
+      var label = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending\u2026'; }
+      status.className = 'form-status';
+
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.status);
+        form.style.display = 'none';
+        status.className = 'form-status is-ok';
+        status.innerHTML = tick +
+          '<div><strong>Thanks \u2014 that\u2019s landed.</strong>' +
+          '<p>I read every one of these myself' +
+          (email ? ' and I\u2019ll reply from <a href="mailto:' + email + '">' + email + '</a>' : '') +
+          '. No autoresponder, no queue.</p></div>';
+        status.scrollIntoView({ block: 'center' });
+      })
+      .catch(function () {
+        status.className = 'form-status is-err';
+        status.innerHTML = warn +
+          '<div><strong>That didn\u2019t send.</strong>' +
+          '<p>Something went wrong on the way out' +
+          (email ? ' \u2014 email me directly at <a href="mailto:' + email + '">' + email + '</a> and I\u2019ll pick it up' : '') +
+          '.</p></div>';
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = label; }
+        form.removeAttribute('data-sending');
+      });
+    });
+  }
+
   /* --- footer year ---------------------------------------------------- */
   var year = document.getElementById('year');
   if (year) year.textContent = new Date().getFullYear();

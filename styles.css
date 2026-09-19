@@ -558,6 +558,30 @@ a{ color: inherit; }
 
 @media (max-width: 620px){ .form-row{ grid-template-columns: 1fr; } }
 
+/* --- form status panel (created by script.js on submit) -------------- */
+.form-status{ display: none; }
+.form-status.is-ok,
+.form-status.is-err{
+  display: flex; gap: 14px; align-items: flex-start;
+  max-width: 680px; margin-top: 1.6em;
+  padding: 22px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  animation: g-rise .5s cubic-bezier(.2,.7,.3,1) both;
+}
+.form-status.is-err{ border-left-color: #C4523B; }
+.form-status svg{ flex: none; width: 22px; height: 22px; margin-top: 3px; color: var(--accent); }
+.form-status.is-err svg{ color: #C4523B; }
+.form-status strong{
+  display: block; font-family: var(--font-display); font-weight: 700;
+  font-size: 1.05rem; color: var(--text); margin-bottom: .3em;
+}
+.form-status p{ margin: 0; font-size: .94rem; }
+.form-status a{ color: var(--accent); font-weight: 600; }
+.contact-form .btn[disabled]{ opacity: .6; cursor: default; transform: none; }
+
 /* ===================================================================
    Footer
    =================================================================== */
