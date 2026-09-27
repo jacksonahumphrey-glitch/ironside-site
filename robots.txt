@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://ironside-site.onrender.com/sitemap.xml
