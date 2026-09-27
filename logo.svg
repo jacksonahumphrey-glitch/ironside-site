@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 608 611" fill="url(#ironsideMark)">
+  <defs><linearGradient id="ironsideMark" gradientUnits="userSpaceOnUse" x1="0" y1="611" x2="608" y2="0"><stop offset="0" stop-color="#f64f00"/><stop offset=".5" stop-color="#fb7f03"/><stop offset="1" stop-color="#fdba08"/></linearGradient></defs>
+  <path d="M26.2 0H246.8A26.2 26.2 0 0 1 273 26.2V104.9A181.1 181.1 0 0 1 91.9 286H26.2A26.2 26.2 0 0 1 0 259.8V26.2A26.2 26.2 0 0 1 26.2 0Z"/>
+  <path d="M342.5 0H410.1A197.9 197.9 0 0 1 608 197.9V256.5A29.5 29.5 0 0 1 578.5 286H342.5A29.5 29.5 0 0 1 313 256.5V29.5A29.5 29.5 0 0 1 342.5 0Z"/>
+  <path d="M29.6 327H243.4A29.6 29.6 0 0 1 273 356.6V463.1A147.9 147.9 0 0 1 125.1 611H29.6A29.6 29.6 0 0 1 0 581.4V356.6A29.6 29.6 0 0 1 29.6 327Z"/>
+  <path d="M485.1 327H578.5A29.5 29.5 0 0 1 608 356.5V581.5A29.5 29.5 0 0 1 578.5 611H342.5A29.5 29.5 0 0 1 313 581.5V499.1A172.1 172.1 0 0 1 485.1 327Z"/>
+</svg>
